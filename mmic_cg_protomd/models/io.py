@@ -1,6 +1,8 @@
-""" Populate this file if your component requires its own models """
-
+from cmselemental.models.procedures import ProcInput, ProcOutput
 from mmelemental.models.base import ProtoModel
+from mmelemental.models import Molecule, ForceField, TrajInput, ForcesInput
+from pydantic import Field, validator
+from typing import Optional, Dict, List, Tuple, Union
 
 __all__ = ["InputModel", "OutputModel"]
 
