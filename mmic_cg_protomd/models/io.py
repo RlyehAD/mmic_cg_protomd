@@ -6,7 +6,7 @@ from pydantic import Field
 from typing import Optional
 
 
-__all__ = ["InputModel", "OutputModel"]
+__all__ = ["ComputeProtomdInput", "ComputeProtomdOutput"]
 
 
 class ComputeProtomdInput(ProcInput):
@@ -24,6 +24,6 @@ class ComputeProtomdInput(ProcInput):
 class ComputeProtomdOutput(ProtoModel):
     """ An output model for mmic_cg_protomd. """
 
-    proc_input: CoarseOutput = Field(..., description="Procedure input schema.")
+    proc_input: CoarseInput = Field(..., description="Procedure input schema.")
 
     molecule: str = Field(None, description="Molecule file string object that stores the coarse grained molecules")

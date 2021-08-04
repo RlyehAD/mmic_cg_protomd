@@ -1,10 +1,13 @@
 """
 Components in mmic_cg_protomd.
 """
+import mmelemental
 import numpy as np 
 import MDAnalysis as mda 
 import proto_md.subsystems as ss
 #from mmic_cg_protomd.models import ComputeProtomdInput, ComputeProtomdOutput
+from mmelemental.util.files import random_file
+from mmic_cg.models.proc import CoarseInput, CoarseOutput
 from typing import List, Tuple, Optional
 from mmic.components.blueprints.generic_component import GenericComponent
 from ..models import *
@@ -12,7 +15,7 @@ from ..models import *
 __all__ = ["Component"]
 
 
-class Component(GenericComponent):
+class CoarseProtoMDComponent(GenericComponent):
     """ A sample component that defines the 3 required methods. """
 
     @classmethod
@@ -30,16 +33,16 @@ class Component(GenericComponent):
         extra_commands: Optional[List[str]] = None,
         scratch_name: Optional[str] = None,
         timeout: Optional[int] = None,
-    ) -> Tuple[bool, OutputModel]:
+    ) -> Tuple[bool, CoarseOutput]:
 
         # Convert input dictionary to model
         if isinstance(inputs, dict):
             inputs = self.input()(**inputs)
 
         # Load the cg method
-        supported_methods = ["spacewarping":"ss.SpaceWarpingSubsystemFactory", 
+        supported_methods = {"spacewarping":"ss.SpaceWarpingSubsystemFactory", 
             "comtinuumfieldvariable":"ss.ContinuumSubsystemFactory",
-            "centerofmass":"ss.RigidSubsystemFactory",]
+            "centerofmass":"ss.RigidSubsystemFactory"}
 
         for key, val in supported_methods.items():
             if key == inputs.method:
@@ -70,14 +73,18 @@ class Component(GenericComponent):
         # Need to write a 'if' to deal with velocities here
         #cg_vel = [sub.ComputeCG_Vel(universe.atoms.)]
 
-        num_cg_atoms = np.size(cg_pos,1)
-        #resindex = [0]*num_cg_atoms
-        #u_cg = mda.Universe.empty(num_cg_atoms, 1, resindex, trajectory=True)
-        #u.add_TopologyAttr('name',['cg']*num_cg_atoms)
-        #u.add_TopologyAttr('resname', ['cg_atoms'])
-        #u.add_TopologyAttr('resnum', CG) 
-        #u_cg.load_new(cg_pos)
-        #mol = Molecule.from_data(data=u,dtype="mdanalysis")
+        mols = {}
+        for i in cg_pos: # Go through every subsystem
+            num_cg_atoms = len(i)
+            symbols = np.array(["cg"]*num_cg_atoms)
+            mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(i), geometry=i)
+            mols["cg_mol"+str(i)] = mol
 
-        # Populate kwargs from inputs
-        return True, OutputModel(**kwargs)
+
+        return True, CoarseOutput(
+            proc_input=inputs,
+            schema_name=inputs.schema_name,
+            schema_version=inputs.schema_version,
+            molecule=mols,
+            success=True,
+            )

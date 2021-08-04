@@ -2,4 +2,6 @@
 mmic_cg_protomd
 A MMIC component used to coarse-grain selected atoms
 """
-from .component import *
+from .protomd_compute_component import CoarseProtoMDComponent
+
+__all__ = ["CoarseProtoMDComponent"]
