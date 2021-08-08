@@ -66,19 +66,26 @@ class CoarseProtoMDComponent(GenericComponent):
 
         universe = mda.Universe(cg_compute.molecule)
 
-        nCG, SS = eval(factory)(**inputs.keywords)
+        nCG, SS = eval(factory)(**inputs.method_keywords)
         [sub.universe_changed(universe) for sub in SS]
         [sub.equilibrated() for sub in SS]
         cg_pos = [sub.ComputeCG(universe.atoms.positions) for sub in SS]
         # Need to write a 'if' to deal with velocities here
-        #cg_vel = [sub.ComputeCG_Vel(universe.atoms.)]
+
+        if inputs.cg_options["velocities"] == True:
+            cg_vel = [sub.ComputeCG_Vel(universe.atoms.velocities)]
 
         mols = {}
+        j = 1# j means the jth sub system
         for i in cg_pos: # Go through every subsystem
             num_cg_atoms = len(i)
             symbols = np.array(["cg"]*num_cg_atoms)
-            mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(i), geometry=i)
-            mols["cg_mol"+str(i)] = mol
+            if inputs.cg_options["velocities"] == True:
+                mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(j), geometry=i, velocities=cg_vel[j-1])
+            else:
+                mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(j), geometry=i)
+            mols["cg_mol"+str(j)] = mol
+            j = j+1
 
 
         return True, CoarseOutput(

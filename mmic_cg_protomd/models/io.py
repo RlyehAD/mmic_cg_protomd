@@ -17,7 +17,12 @@ class ComputeProtomdInput(ProcInput):
         None,
         description="The file of the coordinates of the atoms in the system. Should be a .gro file.",
     )
-
+    """
+    velocities: bool = Field(
+    	False,
+    	description="If set as True, velocites are going to be coarse-grained. Please set it to False if no velocities is included in this step."
+    	)
+	"""
 
 #molecule is None by default because ensemble might be added later
 
