@@ -24,7 +24,8 @@ dependencies:
     - git+https://github.com/MolSSI/mmic.git
     - git+https://github.com/CTCNano/proto_md.git
     - git+https://github.com/RlyehAD/mmic_cg.git
-    
+    - git+https://github.com/MolSSI/mmic_parmed.git
+
 
 
 
