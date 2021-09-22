@@ -26,6 +26,7 @@ dependencies:
     - git+https://github.com/RlyehAD/mmic_cg.git
     - git+https://github.com/parmed/parmed.git
     - git+https://github.com/MolSSI/mmic_parmed.git
+    - git+https://github.com/MolSSI/mmic_translator.git
 
 
 
