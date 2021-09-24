@@ -75,7 +75,7 @@ class CoarseProtoMDComponent(GenericComponent):
         # Need to write a 'if' to deal with velocities here
 
         if inputs.cg_options["velocities"] == True:
-            cg_vel = [sub.ComputeCG_Vel(universe.atoms.velocities)]
+            cg_vel = [sub.ComputeCG_Vel(universe.atoms.velocities) for sub in SS]
 
         mols = {}
         j = 1# j means the jth sub system

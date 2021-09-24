@@ -11,7 +11,6 @@ from mmic_cg_protomd.components import CoarseProtoMDComponent
 import pytest
 import sys
 import os
-import pytest
 import mm_data
 
 
