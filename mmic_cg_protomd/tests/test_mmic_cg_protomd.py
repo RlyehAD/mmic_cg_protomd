@@ -35,7 +35,6 @@ def test_compute_component():
         schema_name="test",
         schema_version=1.0,
         method_keywords={"kmax": 1},
-        cg_options={"velocities":False}
     )
 
     outputs = CoarseProtoMDComponent.compute(inputs)
