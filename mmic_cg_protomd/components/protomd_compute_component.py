@@ -67,6 +67,7 @@ class CoarseProtoMDComponent(GenericComponent):
         )
 
         universe = mda.Universe(cg_compute.molecule)
+        vel = True # cg velocity is going to be computed by default
 
         nCG, SS = eval(factory)(**inputs.method_keywords)
         [sub.universe_changed(universe) for sub in SS]
@@ -74,15 +75,22 @@ class CoarseProtoMDComponent(GenericComponent):
         cg_pos = [sub.ComputeCG(universe.atoms.positions) for sub in SS]
         # Need to write a 'if' to deal with velocities here
 
+        try:
+            cg_vel = [sub.ComputeCG_Vel(universe.atoms.velocities) for sub in SS]
+        except Exception:
+            cg_vel = cg_pos * 0
+            vel = False
+        """
         if inputs.cg_options["velocities"] == True:
             cg_vel = [sub.ComputeCG_Vel(universe.atoms.velocities) for sub in SS]
+        """
 
         mols = {}
         j = 1# j means the jth sub system
         for i in cg_pos: # Go through every subsystem
             num_cg_atoms = len(i)
             symbols = np.array(["cg"]*num_cg_atoms)
-            if inputs.cg_options["velocities"] == True:
+            if vel == True:
                 mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(j), geometry=i, velocities=cg_vel[j-1])
             else:
                 mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(j), geometry=i)
