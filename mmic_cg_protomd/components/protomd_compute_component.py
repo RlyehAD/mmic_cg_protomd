@@ -6,12 +6,14 @@ import numpy as np
 import os
 import MDAnalysis as mda 
 import proto_md.subsystems as ss
+import tempfile
 #from mmic_cg_protomd.models import ComputeProtomdInput, ComputeProtomdOutput
-from cmselemental.util.files import random_file
 from mmic_cg.models.proc import InputCoarse, OutputCoarse
 from typing import List, Tuple, Optional
 from mmic.components.blueprints.generic_component import GenericComponent
+from cmselemental.util.decorators import classproperty
 from ..models import *
+
 
 __all__ = ["Component"]
 
@@ -19,13 +21,17 @@ __all__ = ["Component"]
 class CoarseProtoMDComponent(GenericComponent):
     """ A sample component that defines the 3 required methods. """
 
-    @classmethod
+    @classproperty
     def input(cls):
         return InputCoarse
 
-    @classmethod
+    @classproperty
     def output(cls):
         return OutputCoarse
+
+    @classproperty
+    def version(cls):
+        return None
 
     def execute(
         self,
@@ -55,7 +61,7 @@ class CoarseProtoMDComponent(GenericComponent):
         # write the gro file
         mols = inputs.molecule
         mol_name, mol = list(mols.items()).pop()
-        gro_file = random_file(suffix=".gro")
+        gro_file = tempfile.NamedTemporaryFile(suffix=".gro")
         clean_files = [gro_file] 
         mol.to_file(gro_file, translator="mmic_parmed")
 
