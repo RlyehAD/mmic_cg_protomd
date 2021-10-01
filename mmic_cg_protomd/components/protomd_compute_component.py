@@ -8,7 +8,7 @@ import MDAnalysis as mda
 import proto_md.subsystems as ss
 #from mmic_cg_protomd.models import ComputeProtomdInput, ComputeProtomdOutput
 from cmselemental.util.files import random_file
-from mmic_cg.models.proc import CoarseInput, CoarseOutput
+from mmic_cg.models.proc import InputCoarse, OutputCoarse
 from typing import List, Tuple, Optional
 from mmic.components.blueprints.generic_component import GenericComponent
 from ..models import *
@@ -21,20 +21,20 @@ class CoarseProtoMDComponent(GenericComponent):
 
     @classmethod
     def input(cls):
-        return CoarseInput
+        return InputCoarse
 
     @classmethod
     def output(cls):
-        return CoarseOutput
+        return OutputCoarse
 
     def execute(
         self,
-        inputs: CoarseInput,
+        inputs: InputCoarse,
         extra_outfiles: Optional[List[str]] = None,
         extra_commands: Optional[List[str]] = None,
         scratch_name: Optional[str] = None,
         timeout: Optional[int] = None,
-    ) -> Tuple[bool, CoarseOutput]:
+    ) -> Tuple[bool, OutputCoarse]:
 
         # Convert input dictionary to model
         if isinstance(inputs, dict):
@@ -59,7 +59,7 @@ class CoarseProtoMDComponent(GenericComponent):
         clean_files = [gro_file] 
         mol.to_file(gro_file, translator="mmic_parmed")
 
-        cg_compute = ComputeProtomdInput(
+        cg_compute = InputComputeProtomd(
             proc_input=inputs,
             molecule=gro_file,
             schema_name=inputs.schema_name,
@@ -100,7 +100,7 @@ class CoarseProtoMDComponent(GenericComponent):
 
         self.cleanup(clean_files)
         
-        return True, CoarseOutput(
+        return True, OutputCoarse(
             proc_input=inputs,
             schema_name=inputs.schema_name,
             schema_version=inputs.schema_version,

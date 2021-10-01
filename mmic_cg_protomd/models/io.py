@@ -1,17 +1,17 @@
-from cmselemental.models.procedures import ProcInput
+from cmselemental.models.procedures import InputProc
 from mmelemental.models.base import ProtoModel
-from mmic_cg.models import CoarseInput, CoarseOutput
+from mmic_cg.models import InputCoarse, OutputCoarse
 from mmelemental.models import Molecule
 from pydantic import Field
 from typing import Optional
 
 
-__all__ = ["ComputeProtomdInput", "ComputeProtomdOutput"]
+__all__ = ["InputComputeProtomd", "OutputComputeProtomd"]
 
 
-class ComputeProtomdInput(ProcInput):
+class InputComputeProtomd(InputProc):
     """ An input model for mmic_cg_protomd. """
-    proc_input: CoarseInput = Field(..., description="Procedure input schema.")
+    proc_input: InputCoarse = Field(..., description="Procedure input schema.")
 
     molecule: str = Field(
         None,
@@ -26,9 +26,9 @@ class ComputeProtomdInput(ProcInput):
 
 #molecule is None by default because ensemble might be added later
 
-class ComputeProtomdOutput(ProtoModel):
+class OutputComputeProtomd(ProtoModel):
     """ An output model for mmic_cg_protomd. """
 
-    proc_input: CoarseInput = Field(..., description="Procedure input schema.")
+    proc_input: InputCoarse = Field(..., description="Procedure input schema.")
 
     molecule: str = Field(None, description="Molecule file string object that stores the coarse grained molecules")

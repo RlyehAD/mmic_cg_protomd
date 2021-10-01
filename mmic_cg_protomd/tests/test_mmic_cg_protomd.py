@@ -5,7 +5,7 @@ Unit and regression test for the mmic_cg_protomd package.
 # Import package, test suite, and other packages as needed
 import mmelemental
 from mmelemental.models import Molecule
-from mmic_cg.models import CoarseInput, CoarseOutput
+from mmic_cg.models import InputCoarse, OutputCoarse
 from mmic_cg_protomd.components import CoarseProtoMDComponent
 
 import pytest
@@ -29,7 +29,7 @@ def test_compute_component():
 
     mol = mmelemental.models.Molecule.from_file(mm_data.mols["water-mol.json"])
 
-    inputs = CoarseInput(
+    inputs = InputCoarse(
         molecule={"mol": mol},
         method="spacewarping",
         schema_name="test",
