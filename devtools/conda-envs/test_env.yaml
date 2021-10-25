@@ -9,19 +9,17 @@ dependencies:
   - python
   - pip
 
-    # Testing
-  - pytest
-  - pytest-cov
-  - codecov
-
     # Pip-only installs
   - pip:
+    - pytest
+    - pytest-cov
+    - codecov
     - pydantic
     - qcelemental
-    - git+https://github.com/MolSSI/cmselemental.git@v0.2.0
+    - cmselemental
     - git+https://github.com/MolSSI/mmelemental.git
     - git+https://github.com/MolSSI/mm_data.git
-    - git+https://github.com/MolSSI/mmic.git
+    - mmic
     - git+https://github.com/CTCNano/proto_md.git
     - git+https://github.com/RlyehAD/mmic_cg.git
     - git+https://github.com/parmed/parmed.git
