@@ -44,7 +44,7 @@ class CoarseProtoMDComponent(GenericComponent):
 
         # Convert input dictionary to model
         if isinstance(inputs, dict):
-            inputs = self.input()(**inputs)
+            inputs = self.input(**inputs)
 
         # Load the cg method
         supported_methods = {"spacewarping":"ss.SpaceWarpingSubsystemFactory", 
@@ -61,7 +61,7 @@ class CoarseProtoMDComponent(GenericComponent):
         # write the gro file
         mols = inputs.molecule
         mol_name, mol = list(mols.items()).pop()
-        gro_file = tempfile.NamedTemporaryFile(suffix=".gro")
+        gro_file = tempfile.NamedTemporaryFile(suffix=".gro").name
         clean_files = [gro_file] 
         mol.to_file(gro_file, translator="mmic_parmed")
 
@@ -73,35 +73,30 @@ class CoarseProtoMDComponent(GenericComponent):
         )
 
         universe = mda.Universe(cg_compute.molecule)
-        vel = True # cg velocity is going to be computed by default
 
         nCG, SS = eval(factory)(**inputs.method_keywords)
+ 
         [sub.universe_changed(universe) for sub in SS]
         [sub.equilibrated() for sub in SS]
-        cg_pos = [sub.ComputeCG(universe.atoms.positions) for sub in SS]
-        # Need to write a 'if' to deal with velocities here
+        cg_pos = [sub.computeCG_pos(universe.atoms.positions) for sub in SS]
+        
 
         try:
-            cg_vel = [sub.ComputeCG_Vel(universe.atoms.velocities) for sub in SS]
+            vel = universe.atoms.velocities
+            cg_vel = [sub.computeCG_vel(universe.atoms.velocities) for sub in SS]
         except Exception:
-            cg_vel = cg_pos * 0
-            vel = False
-        """
-        if inputs.cg_options["velocities"] == True:
-            cg_vel = [sub.ComputeCG_Vel(universe.atoms.velocities) for sub in SS]
-        """
+            cg_vel = [pos*0 for pos in cg_pos]
 
         mols = {}
-        j = 1# j means the jth sub system
         for i in cg_pos: # Go through every subsystem
-            num_cg_atoms = len(i)
-            symbols = np.array(["cg"]*num_cg_atoms)
-            if vel == True:
-                mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(j), geometry=i, velocities=cg_vel[j-1])
-            else:
-                mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(j), geometry=i)
-            mols["cg_mol"+str(j)] = mol
-            j = j+1
+            k = 1 # k is used to label the number of cg mols (the number of subsystem)
+            for j in cg_vel:
+                num_cg_atoms = len(i)
+                symbols = np.array(["cg"]*num_cg_atoms)
+                mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(j), geometry=i, velocities=j)
+                mols["cg_mol"+str(k)] = mol
+                k = k + 1
+                break
 
 
         self.cleanup(clean_files)

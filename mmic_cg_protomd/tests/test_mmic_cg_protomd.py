@@ -34,7 +34,9 @@ def test_compute_component():
         method="spacewarping",
         schema_name="test",
         schema_version=1.0,
-        method_keywords={"kmax": 1},
+        method_keywords={"kmax":0},
     )
 
     outputs = CoarseProtoMDComponent.compute(inputs)
+    print(outputs.molecule["cg_mol1"].geometry)
+    print(outputs.molecule["cg_mol1"].velocities)
