@@ -2,12 +2,6 @@
 mmic_cg_protoMD
 A MMIC component used to coarse-grain selected atoms
 """
-
-# Add imports here
-from .mmic_mmic_cg_protomd import *
-from . import models, components
-
-# Handle versioneer
 from ._version import get_versions
 
 versions = get_versions()

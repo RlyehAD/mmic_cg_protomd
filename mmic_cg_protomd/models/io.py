@@ -1,9 +1,7 @@
 from cmselemental.models.procedures import InputProc
 from mmelemental.models.base import ProtoModel
 from mmic_cg.models import InputCoarse, OutputCoarse
-from mmelemental.models import Molecule
 from pydantic import Field
-from typing import Optional
 
 
 __all__ = ["InputComputeProtomd", "OutputComputeProtomd"]

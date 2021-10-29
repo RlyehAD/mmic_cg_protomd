@@ -5,8 +5,8 @@ import mmelemental
 import numpy as np 
 import os
 import MDAnalysis as mda 
-import proto_md.subsystems as ss
 import tempfile
+import proto_md.subsystems as ss
 #from mmic_cg_protomd.models import ComputeProtomdInput, ComputeProtomdOutput
 from mmic_cg.models.proc import InputCoarse, OutputCoarse
 from typing import List, Tuple, Optional
@@ -15,7 +15,7 @@ from cmselemental.util.decorators import classproperty
 from ..models import *
 
 
-__all__ = ["Component"]
+__all__ = ["CoarseProtoMDComponent"]
 
 
 class CoarseProtoMDComponent(GenericComponent):
@@ -82,21 +82,18 @@ class CoarseProtoMDComponent(GenericComponent):
         
 
         try:
-            vel = universe.atoms.velocities
+            universe.atoms.velocities
             cg_vel = [sub.computeCG_vel(universe.atoms.velocities) for sub in SS]
         except Exception:
             cg_vel = [pos*0 for pos in cg_pos]
 
         mols = {}
-        for i in cg_pos: # Go through every subsystem
-            k = 1 # k is used to label the number of cg mols (the number of subsystem)
-            for j in cg_vel:
-                num_cg_atoms = len(i)
-                symbols = np.array(["cg"]*num_cg_atoms)
-                mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(j), geometry=i, velocities=j)
-                mols["cg_mol"+str(k)] = mol
-                k = k + 1
-                break
+        for i, j in zip(cg_pos, cg_vel):
+            num_cg_atoms = len(i)
+            symbols = np.array(["cg"]*num_cg_atoms)
+            mol = mmelemental.models.Molecule(schema_name="mmschema_molecule", schema_version=1.0, symbols=symbols,name="cg_atoms"+str(j), geometry=i, velocities=j)
+            mols["cg_mol"+mol.name] = mol
+
 
 
         self.cleanup(clean_files)
