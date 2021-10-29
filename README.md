@@ -40,7 +40,7 @@ cgInp = InputCoarse(
 cgOut = CoarseProtoMDComponent.compute(cgInp)
 ```
 
-# Extract MMSchema CG mol
+## Extract MMSchema CG mol
 ```python
 cgMol = cgOut.mol
 cgVel = cgOut.mol["velocities"]
