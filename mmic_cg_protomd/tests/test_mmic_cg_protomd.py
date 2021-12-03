@@ -27,17 +27,15 @@ def test_compute_component():
     is SpaceWarping and a water molecule is used
     """
 
-    mol = mmelemental.models.Molecule.from_file(mm_data.mols["water-mol.json"])
+    mol = mmelemental.models.Molecule.from_file(mm_data.mols["alanine.gro"])
 
     inputs = InputCoarse(
         molecule={"mol": mol},
         method="spacewarping",
         schema_name="test",
         schema_version=1.0,     
-        method_keywords={"kmax":0},
+        method_keywords={"kmax":1},
     )
 
     outputs = CoarseProtoMDComponent.compute(inputs)
-    for key, val in outputs.molecule.items():
-            print(outputs.molecule[key].geometry)
-            print(outputs.molecule[key].velocities)
+

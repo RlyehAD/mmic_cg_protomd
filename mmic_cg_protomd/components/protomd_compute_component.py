@@ -79,7 +79,6 @@ class CoarseProtoMDComponent(GenericComponent):
         [sub.universe_changed(universe) for sub in SS]
         [sub.equilibrated() for sub in SS]
         cg_pos = [sub.computeCG_pos(universe.atoms.positions) for sub in SS]
-        
 
         try:
             universe.atoms.velocities
